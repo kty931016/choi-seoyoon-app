@@ -3,9 +3,10 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#fff8f5">
-  <meta name="description" content="최서윤의 성장과 일상을 위한 육아 앱">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="최서윤">
   <link rel="manifest" href="./manifest.json">
   <title>최서윤 🌷</title>
 
@@ -13,16 +14,14 @@
     :root {
       --bg: #fffaf7;
       --card: #ffffff;
-      --accent: #e89b91;
-      --accent-light: #fff0ec;
       --ink: #493b39;
       --muted: #8e817e;
       --line: #f0e3df;
+      --accent: #e89b91;
+      --accent-light: #fff0ec;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -33,21 +32,19 @@
       line-height: 1.65;
     }
 
-    button {
-      font: inherit;
-      cursor: pointer;
-    }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
 
     .app {
       max-width: 620px;
       min-height: 100vh;
       margin: auto;
-      padding: 20px 16px 100px;
+      padding: 16px 16px 100px;
     }
 
     header {
       text-align: center;
-      padding: 10px 0 20px;
+      padding: 10px 0 18px;
     }
 
     .logo {
@@ -64,7 +61,7 @@
       font-size: 25px;
     }
 
-    .sub {
+    .sub, .muted {
       color: var(--muted);
       font-size: 13px;
     }
@@ -73,7 +70,7 @@
       display: grid;
       grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 5px;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
     }
 
     .tab {
@@ -100,7 +97,7 @@
     }
 
     .hero h2 {
-      margin: 4px 0 8px;
+      margin: 5px 0 8px;
       font-size: 22px;
     }
 
@@ -117,6 +114,11 @@
       padding: 4px 10px;
       font-size: 12px;
       font-weight: 700;
+    }
+
+    .section-title {
+      font-size: 18px;
+      margin: 22px 0 10px;
     }
 
     .card {
@@ -136,23 +138,14 @@
     .card p {
       margin: 7px 0;
       font-size: 14px;
-    }
-
-    .muted {
-      color: var(--muted);
-      font-size: 12px !important;
-    }
-
-    .section-title {
-      font-size: 18px;
-      margin: 22px 0 10px;
+      white-space: pre-line;
     }
 
     .source {
       display: inline-block;
+      margin-top: 8px;
       color: #a95f56;
       font-size: 12px;
-      margin-top: 8px;
       text-decoration: underline;
     }
 
@@ -162,15 +155,61 @@
       padding: 12px;
       color: #78634d;
       font-size: 12px;
-      margin-bottom: 14px;
+      margin: 12px 0;
     }
 
-    .empty {
-      text-align: center;
-      padding: 30px 12px;
+    .weather-loading {
       color: var(--muted);
+      font-size: 13px;
+      padding: 8px 0;
+      overflow-wrap: anywhere;
+    }
+
+    .weather-error {
+      color: #a04d45;
+      background: #fff0ee;
+      border-radius: 12px;
+      padding: 11px;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .button {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      border: 0;
+      border-radius: 12px;
+      background: var(--ink);
+      color: white;
+      font-weight: 700;
+    }
+
+    .button.secondary {
       background: white;
-      border-radius: 16px;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+
+    .form {
+      display: grid;
+      gap: 12px;
+    }
+
+    .form label {
+      display: grid;
+      gap: 5px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 11px;
+      background: white;
+      color: var(--ink);
     }
 
     .profile-row {
@@ -180,6 +219,15 @@
       border-bottom: 1px solid var(--line);
       padding: 10px 0;
       font-size: 14px;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 25px 14px;
+      color: var(--muted);
+      background: white;
+      border-radius: 16px;
+      border: 1px solid var(--line);
     }
 
     footer {
@@ -193,12 +241,7 @@
       text-align: center;
       color: var(--muted);
       font-size: 11px;
-    }
-
-    .loading {
-      text-align: center;
-      padding: 25px 10px;
-      color: var(--muted);
+      z-index: 10;
     }
   </style>
 </head>
@@ -213,16 +256,26 @@
 
     <nav class="tabs" id="tabs" aria-label="메뉴"></nav>
     <main id="main">
-      <div class="loading">서윤이 정보를 불러오는 중이에요 🌷</div>
+      <div class="empty">서윤이 정보를 불러오는 중이에요 🌷</div>
     </main>
   </div>
 
   <footer>우리 아기의 속도에 맞춰 천천히 함께해요 💗</footer>
 
   <script>
-    const BABY_NAME = "서윤";
-    const BIRTH_DATE = "2026-01-13";
+    const STORAGE_KEY = "choiSeoyoonProfile";
+    const DEFAULT_PROFILE = {
+      name: "서윤",
+      birth: "2026-01-13",
+      temp: null,
+      rain: null,
+      wind: null,
+      sky: "",
+      pty: "",
+      updatedAt: ""
+    };
 
+    let profile = loadProfile();
     let currentPage = "home";
     let developmentData = [];
     let playData = [];
@@ -235,6 +288,19 @@
       profile: "우리 아기"
     };
 
+    function loadProfile() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+        return { ...DEFAULT_PROFILE, ...(saved || {}) };
+      } catch {
+        return { ...DEFAULT_PROFILE };
+      }
+    }
+
+    function saveProfile() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+    }
+
     function escapeHTML(value) {
       return String(value ?? "").replace(/[&<>"']/g, char => ({
         "&": "&amp;",
@@ -246,59 +312,111 @@
     }
 
     function getAge() {
-      const birth = new Date(BIRTH_DATE + "T00:00:00");
+      const birth = new Date(profile.birth + "T00:00:00");
       const today = new Date();
 
       let months =
         (today.getFullYear() - birth.getFullYear()) * 12 +
         today.getMonth() - birth.getMonth();
 
-      if (today.getDate() < birth.getDate()) {
-        months--;
-      }
-
+      if (today.getDate() < birth.getDate()) months--;
       return Math.max(0, months);
     }
 
-    /*
-      핵심 수정:
-      JSON의 제목이 '한 달 · ...', '열두 달 · ...'처럼
-      한글 숫자로 되어 있어도 month 값을 사용해
-      '1개월 · ...', '12개월 · ...'로 표시합니다.
-    */
+    function getAgeText() {
+      return `${getAge()}개월`;
+    }
+
     function formatMonthTitle(item) {
       const title = String(item.title || "발달 정보");
       const month = Number(item.month);
 
-      if (!Number.isFinite(month)) {
-        return escapeHTML(title);
-      }
-
-      if (month === 0) {
+      if (!Number.isFinite(month) || month === 0) {
         return escapeHTML(title);
       }
 
       const separator = title.indexOf("·");
-      const rest = separator >= 0
+      const remainder = separator >= 0
         ? title.slice(separator + 1).trim()
         : title;
 
-      return `${month}개월 · ${escapeHTML(rest)}`;
+      return `${month}개월 · ${escapeHTML(remainder)}`;
+    }
+
+    function season() {
+      const month = new Date().getMonth() + 1;
+      if (month <= 2 || month === 12) return "겨울";
+      if (month <= 5) return "봄";
+      if (month <= 8) return "여름";
+      return "가을";
+    }
+
+    function clothing(temp, rain, wind) {
+      let outfit;
+
+      if (temp <= 5) outfit = "도톰한 내의 + 보온 외투";
+      else if (temp <= 10) outfit = "긴팔 내의 + 도톰한 상하의 + 외투";
+      else if (temp <= 15) outfit = "긴팔 + 긴바지 + 얇은 외투";
+      else if (temp <= 20) outfit = "긴팔 상하의 + 얇은 겉옷";
+      else if (temp <= 25) outfit = "얇은 긴팔 또는 반팔 + 긴바지";
+      else if (temp <= 28) outfit = "반팔 + 얇은 바지";
+      else outfit = "통풍 좋은 반팔 + 얇은 하의";
+
+      if (rain >= 60) outfit += " · 우산이나 방수 겉옷 준비";
+      if (wind >= 7) outfit += " · 바람막이 추가 고려";
+
+      return outfit;
     }
 
     function renderTabs() {
       document.getElementById("tabs").innerHTML =
         Object.entries(pageNames).map(([id, name]) => `
-          <button
-            class="tab ${currentPage === id ? "active" : ""}"
-            data-page="${id}"
-            aria-current="${currentPage === id ? "page" : "false"}"
-          >${name}</button>
+          <button class="tab ${currentPage === id ? "active" : ""}"
+            data-page="${id}">${name}</button>
         `).join("");
+    }
+
+    function sourceLink(item) {
+      if (!item.sourceUrl) return "";
+      try {
+        const url = new URL(item.sourceUrl);
+        if (url.protocol !== "https:") return "";
+        return `<a class="source" href="${escapeHTML(url.href)}"
+          target="_blank" rel="noopener noreferrer">출처 확인하기 ↗</a>`;
+      } catch {
+        return "";
+      }
+    }
+
+    function developmentCard(item) {
+      return `
+        <article class="card">
+          <h3>${formatMonthTitle(item)}</h3>
+          <p>${escapeHTML(item.description || "")}</p>
+          ${item.source
+            ? `<p class="muted">출처: ${escapeHTML(item.source)}</p>`
+            : ""}
+          ${sourceLink(item)}
+        </article>
+      `;
+    }
+
+    function playCard(item) {
+      return `
+        <article class="card">
+          <h3>${escapeHTML(item.title || "오늘의 놀이")}</h3>
+          <p>${escapeHTML(item.description || item.content || "")}</p>
+          ${sourceLink(item)}
+        </article>
+      `;
     }
 
     function renderHome() {
       const age = getAge();
+      const dev = developmentData.find(x => Number(x.month) === age);
+      const play = playData.find(x => Number(x.month) === age);
+      const hasWeather = Number.isFinite(Number(profile.temp)) &&
+        profile.temp !== null && profile.temp !== "";
 
       document.getElementById("main").innerHTML = `
         <section class="hero">
@@ -307,77 +425,47 @@
           <p>오늘도 서윤이의 성장과 작은 변화를 함께 살펴봐요.</p>
         </section>
 
+        <h2 class="section-title">🌤️ 현재 위치 날씨</h2>
+        <article class="card">
+          ${hasWeather ? `
+            <h3>${escapeHTML(profile.sky || "현재 예보")}
+              ${profile.pty ? " · " + escapeHTML(profile.pty) : ""}
+              · ${escapeHTML(profile.temp)}℃</h3>
+            <p>강수확률 ${escapeHTML(profile.rain ?? "-")}% ·
+              바람 ${escapeHTML(profile.wind ?? "-")}m/s</p>
+            <p><b>추천 옷차림</b><br>
+              ${escapeHTML(clothing(Number(profile.temp), Number(profile.rain || 0),
+                Number(profile.wind || 0)))}</p>
+            ${profile.updatedAt
+              ? `<p class="muted">마지막 조회: ${new Date(profile.updatedAt).toLocaleString("ko-KR")}</p>`
+              : ""}
+          ` : `
+            <p>현재 날씨를 조회하면 서윤이 옷차림을 추천해 드려요.</p>
+          `}
+          <button class="button" onclick="getWeather(false)">
+            📍 현재 위치 날씨 새로고침
+          </button>
+          <div id="homeWeatherStatus" class="weather-loading"></div>
+        </article>
+
         <h2 class="section-title">🌱 지금 시기 발달</h2>
-        <div id="homeDevelopment"></div>
+        ${dev ? developmentCard(dev) :
+          `<div class="empty">해당 월령의 발달 정보를 찾을 수 없어요.</div>`}
 
         <h2 class="section-title">🎈 오늘의 놀이</h2>
-        <div id="homePlay"></div>
+        ${play ? playCard(play) :
+          `<div class="empty">놀이 데이터가 아직 준비되지 않았어요.</div>`}
 
         <div class="notice">
-          발달 정보는 아이마다 다른 성장 속도를 이해하기 위한 참고 자료예요.
-          한 가지 행동만으로 발달 지연 여부를 판단하지 마세요.
+          발달 정보는 참고용이에요. 아이마다 발달 속도는 다를 수 있으며,
+          한 가지 행동만으로 발달 상태를 판단하지 마세요.
         </div>
       `;
-
-      const dev = developmentData.find(
-        item => Number(item.month) === age
-      );
-
-      const play = playData.find(
-        item => Number(item.month) === age
-      );
-
-      document.getElementById("homeDevelopment").innerHTML = dev
-        ? renderDevelopmentCard(dev)
-        : `<div class="empty">해당 월령의 발달 정보를 준비하고 있어요.</div>`;
-
-      document.getElementById("homePlay").innerHTML = play
-        ? renderPlayCard(play)
-        : `<div class="empty">해당 월령의 놀이 정보가 아직 없어요.</div>`;
     }
 
-    function renderDevelopmentCard(item) {
-      const sourceLink = item.sourceUrl
-        ? `<a class="source" href="${escapeHTML(item.sourceUrl)}"
-             target="_blank" rel="noopener noreferrer">
-             출처 확인하기 ↗
-           </a>`
-        : "";
-
-      return `
-        <article class="card">
-          <h3>${formatMonthTitle(item)}</h3>
-          <p>${escapeHTML(item.description || "")}</p>
-          ${item.source
-            ? `<p class="muted">출처: ${escapeHTML(item.source)}</p>`
-            : ""}
-          ${sourceLink}
-        </article>
-      `;
-    }
-
-    function renderPlayCard(item) {
-      const sourceLink = item.sourceUrl
-        ? `<a class="source" href="${escapeHTML(item.sourceUrl)}"
-             target="_blank" rel="noopener noreferrer">
-             출처 확인하기 ↗
-           </a>`
-        : "";
-
-      return `
-        <article class="card">
-          <h3>${escapeHTML(item.title || "오늘의 놀이")}</h3>
-          <p>${escapeHTML(item.description || item.content || "")}</p>
-          ${sourceLink}
-        </article>
-      `;
-    }
-
-    function renderDevelopmentPage() {
+    function renderDevelopment() {
       const age = getAge();
-      const item = developmentData.find(
-        entry => Number(entry.month) === age
-      );
+      const item = developmentData.find(x => Number(x.month) === age);
 
       document.getElementById("main").innerHTML = `
         <section class="hero">
@@ -385,23 +473,18 @@
           <h2>${age}개월 발달 살펴보기 👶</h2>
           <p>서윤이의 현재 월령에 해당하는 내용을 확인해요.</p>
         </section>
-
         <div class="notice">
-          발달 항목은 참고용 관찰 가이드예요.
-          모든 아이가 같은 시기에 같은 행동을 보이는 것은 아니에요.
+          발달 항목은 참고용 관찰 가이드예요. 공식 발달 이정표가 제시되는
+          월령과 일반적인 월령별 놀이 참고 정보는 구분해서 살펴봐 주세요.
         </div>
-
-        ${item
-          ? renderDevelopmentCard(item)
-          : `<div class="empty">이 월령의 발달 정보를 찾을 수 없어요.</div>`}
+        ${item ? developmentCard(item) :
+          `<div class="empty">이 월령의 발달 정보를 찾을 수 없어요.</div>`}
       `;
     }
 
-    function renderPlayPage() {
+    function renderPlay() {
       const age = getAge();
-      const item = playData.find(
-        entry => Number(entry.month) === age
-      );
+      const item = playData.find(x => Number(x.month) === age);
 
       document.getElementById("main").innerHTML = `
         <section class="hero">
@@ -409,68 +492,92 @@
           <h2>${age}개월 놀이 🎈</h2>
           <p>놀이를 통해 서윤이와 즐겁게 상호작용해요.</p>
         </section>
-
-        ${item
-          ? renderPlayCard(item)
-          : `<div class="empty">
-              놀이 정보가 아직 준비되지 않았어요.<br>
-              play.json 파일을 추가하면 이곳에 표시돼요.
-            </div>`}
-      `;
-    }
-
-    function renderSeasonPage() {
-      const age = getAge();
-
-      document.getElementById("main").innerHTML = `
-        <section class="hero">
-          <span class="badge">계절과 일상</span>
-          <h2>계절을 함께 느껴봐요 🍂</h2>
-          <p>현재 ${age}개월인 서윤이와 무리하지 않고 주변을 탐색해요.</p>
-        </section>
-
-        <article class="card">
-          <h3>🌳 주변 관찰하기</h3>
-          <p>창밖의 나무, 바람 소리, 햇빛처럼 주변의 변화를 함께 살펴봐요.</p>
-        </article>
-
-        <article class="card">
-          <h3>🧸 실내에서 놀기</h3>
-          <p>날씨가 좋지 않거나 외출이 어려운 날에는 그림책과 안전한 장난감으로 놀아주세요.</p>
-        </article>
-
+        ${item ? playCard(item) :
+          `<div class="empty">해당 월령의 놀이 정보를 찾을 수 없어요.</div>`}
         <div class="notice">
-          외출할 때는 기온과 바람, 미세먼지 등 당일 환경을 확인하고
-          아기의 컨디션에 맞춰 활동해 주세요.
+          놀이 중에는 항상 보호자가 곁에서 지켜봐 주세요.
+          작은 부품, 끈, 비닐 등 질식이나 얽힘 위험이 있는 물건은 피해주세요.
         </div>
       `;
     }
 
-    function renderProfilePage() {
-      const age = getAge();
+    function renderSeason() {
+      const hasWeather = Number.isFinite(Number(profile.temp)) &&
+        profile.temp !== null && profile.temp !== "";
 
+      document.getElementById("main").innerHTML = `
+        <section class="hero">
+          <span class="badge">${season()} 추천</span>
+          <h2>계절을 함께 느껴봐요 🍂</h2>
+          <p>${getAge()}개월 서윤이와 안전하게 주변을 탐색해요.</p>
+        </section>
+
+        <h2 class="section-title">🌤️ 현재 위치 날씨</h2>
+        <article class="card">
+          ${hasWeather ? `
+            <h3>${escapeHTML(profile.temp)}℃ ·
+              ${escapeHTML(profile.sky || "현재 예보")}
+              ${profile.pty ? " · " + escapeHTML(profile.pty) : ""}</h3>
+            <p>강수확률 ${escapeHTML(profile.rain ?? "-")}% ·
+              바람 ${escapeHTML(profile.wind ?? "-")}m/s</p>
+            <p><b>추천 옷차림</b><br>
+              ${escapeHTML(clothing(Number(profile.temp), Number(profile.rain || 0),
+                Number(profile.wind || 0)))}</p>
+          ` : `<p>현재 위치 날씨를 조회해 주세요.</p>`}
+          <button class="button" onclick="getWeather(false)">
+            📍 기상청 날씨 새로고침
+          </button>
+          <div id="homeWeatherStatus" class="weather-loading"></div>
+        </article>
+
+        <h2 class="section-title">🌳 계절 활동</h2>
+        <article class="card">
+          <h3>동네 산책</h3>
+          <p>나뭇잎, 바람, 주변 소리와 색을 천천히 관찰해요.</p>
+        </article>
+        <article class="card">
+          <h3>🖐️ 안전한 촉감 탐색</h3>
+          <p>큰 천이나 부드러운 수건처럼 안전한 재료를 만져보고 느낌을 이야기해 주세요.</p>
+        </article>
+        <article class="card">
+          <h3>📖 계절 그림책</h3>
+          <p>산책 후 관련 그림책을 함께 읽으며 주변에서 본 것들을 연결해 주세요.</p>
+        </article>
+      `;
+    }
+
+    function renderProfile() {
       document.getElementById("main").innerHTML = `
         <section class="hero">
           <span class="badge">우리 아기</span>
-          <h2>최서윤 💗</h2>
-          <p>서윤이의 기본 정보를 확인해요.</p>
+          <h2>서윤이 프로필 💗</h2>
+          <p>이름과 생년월일을 확인하고 저장할 수 있어요.</p>
         </section>
 
         <article class="card">
-          <div class="profile-row">
-            <strong>이름</strong><span>최서윤</span>
-          </div>
-          <div class="profile-row">
-            <strong>생년월일</strong><span>2026년 1월 13일</span>
-          </div>
-          <div class="profile-row">
-            <strong>현재 월령</strong><span>${age}개월</span>
-          </div>
+          <form class="form" id="profileForm">
+            <label>이름
+              <input id="babyName" value="${escapeHTML(profile.name)}" required>
+            </label>
+            <label>생년월일
+              <input id="babyBirth" type="date"
+                value="${escapeHTML(profile.birth)}" required>
+            </label>
+            <button class="button" type="submit">프로필 저장</button>
+          </form>
         </article>
 
-        <div class="notice">
-          월령은 생년월일을 기준으로 자동 계산돼요.
-        </div>
+        <h2 class="section-title">🌤️ 기상청 날씨 설정</h2>
+        <article class="card">
+          <p>버튼을 누르면 휴대폰의 현재 위치 권한을 요청하고,
+            해당 위치의 기상청 단기예보를 가져와요.</p>
+          <button class="button secondary" onclick="getWeather(true)">
+            📍 현재 위치 날씨 가져오기
+          </button>
+          <div id="profileWeatherStatus" class="weather-loading"></div>
+          <p class="muted">날씨 조회가 되지 않으면 위치 권한, 인터넷 연결,
+            기상청 API 인증키와 활용신청 상태를 확인해 주세요.</p>
+        </article>
       `;
     }
 
@@ -478,35 +585,243 @@
       renderTabs();
 
       if (currentPage === "home") renderHome();
-      if (currentPage === "season") renderSeasonPage();
-      if (currentPage === "dev") renderDevelopmentPage();
-      if (currentPage === "play") renderPlayPage();
-      if (currentPage === "profile") renderProfilePage();
+      if (currentPage === "season") renderSeason();
+      if (currentPage === "dev") renderDevelopment();
+      if (currentPage === "play") renderPlay();
+      if (currentPage === "profile") renderProfile();
     }
 
-    async function loadData() {
-      const results = await Promise.allSettled([
-        fetch("./development.json").then(response => {
-          if (!response.ok) throw new Error("development.json");
-          return response.json();
-        }),
-        fetch("./play.json").then(response => {
-          if (!response.ok) throw new Error("play.json");
-          return response.json();
-        })
-      ]);
+    // 기상청 단기예보 API 인증키.
+    // 공개 저장소에서는 인증키가 노출될 수 있다는 점에 유의하세요.
+    const KMA_SERVICE_KEY =
+      "f053b7a6559c24052eea0aa2dfa09761052b74ab2ba626d78ebed51de41bf3ea";
 
-      if (results[0].status === "fulfilled" &&
-          Array.isArray(results[0].value)) {
-        developmentData = results[0].value;
+    function gridFromCoordinates(lat, lon) {
+      const RE = 6371.00877;
+      const GRID = 5.0;
+      const SLAT1 = 30.0;
+      const SLAT2 = 60.0;
+      const OLON = 126.0;
+      const OLAT = 38.0;
+      const XO = 43;
+      const YO = 136;
+      const D2R = Math.PI / 180;
+      const re = RE / GRID;
+      const slat1 = SLAT1 * D2R;
+      const slat2 = SLAT2 * D2R;
+      const olon = OLON * D2R;
+      const olat = OLAT * D2R;
+
+      let sn = Math.tan(Math.PI * 0.25 + slat2 * 0.5) /
+        Math.tan(Math.PI * 0.25 + slat1 * 0.5);
+      sn = Math.log(Math.cos(slat1) / Math.cos(slat2)) / Math.log(sn);
+
+      let sf = Math.tan(Math.PI * 0.25 + slat1 * 0.5);
+      sf = Math.pow(sf, sn) * Math.cos(slat1) / sn;
+
+      const ro = re * sf /
+        Math.pow(Math.tan(Math.PI * 0.25 + olat * 0.5), sn);
+
+      const ra = re * sf /
+        Math.pow(Math.tan(Math.PI * 0.25 + lat * D2R * 0.5), sn);
+
+      let theta = lon * D2R - olon;
+      if (theta > Math.PI) theta -= 2 * Math.PI;
+      if (theta < -Math.PI) theta += 2 * Math.PI;
+      theta *= sn;
+
+      return {
+        nx: Math.floor(ra * Math.sin(theta) + XO + 0.5),
+        ny: Math.floor(ro - ra * Math.cos(theta) + YO + 0.5)
+      };
+    }
+
+    function koreaNow() {
+      return new Date(new Date().toLocaleString("en-US", {
+        timeZone: "Asia/Seoul"
+      }));
+    }
+
+    function pad2(value) {
+      return String(value).padStart(2, "0");
+    }
+
+    function getBaseTime() {
+      const now = koreaNow();
+      const cycles = [2, 5, 8, 11, 14, 17, 20, 23];
+      let hour = now.getHours();
+      let cycle = cycles.filter(value => value <= hour).pop();
+
+      if (cycle === undefined) {
+        cycle = 23;
+        now.setDate(now.getDate() - 1);
       }
 
-      if (results[1].status === "fulfilled" &&
-          Array.isArray(results[1].value)) {
-        playData = results[1].value;
+      // 예보 발표 직후에는 이전 발표 시각을 사용
+      if (hour === cycle && now.getMinutes() < 15) {
+        const index = cycles.indexOf(cycle);
+        if (index > 0) {
+          cycle = cycles[index - 1];
+        } else {
+          cycle = 23;
+          now.setDate(now.getDate() - 1);
+        }
       }
 
-      render();
+      return {
+        date: `${now.getFullYear()}${pad2(now.getMonth() + 1)}${pad2(now.getDate())}`,
+        time: `${pad2(cycle)}00`
+      };
+    }
+
+    async function getWeather(fromProfile) {
+      const statusId = fromProfile
+        ? "profileWeatherStatus"
+        : "homeWeatherStatus";
+      const status = document.getElementById(statusId);
+
+      if (status) status.textContent = "📍 현재 위치를 확인하는 중이에요...";
+
+      if (!navigator.geolocation) {
+        if (status) {
+          status.innerHTML =
+            '<div class="weather-error">이 브라우저에서는 위치 기능을 사용할 수 없어요.</div>';
+        }
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(async position => {
+        try {
+          const grid = gridFromCoordinates(
+            position.coords.latitude,
+            position.coords.longitude
+          );
+
+          if (status) status.textContent = "☁️ 기상청 예보를 가져오는 중이에요...";
+
+          const base = getBaseTime();
+          const params = new URLSearchParams({
+            serviceKey: KMA_SERVICE_KEY,
+            pageNo: "1",
+            numOfRows: "1000",
+            dataType: "JSON",
+            base_date: base.date,
+            base_time: base.time,
+            nx: String(grid.nx),
+            ny: String(grid.ny)
+          });
+
+          const endpoint =
+            "https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst";
+
+          const response = await fetch(`${endpoint}?${params.toString()}`);
+          if (!response.ok) {
+            throw new Error("기상청 API 요청에 실패했어요. 인증키와 활용신청 상태를 확인해 주세요.");
+          }
+
+          const result = await response.json();
+          const apiResponse = result?.response;
+
+          if (apiResponse?.header?.resultCode !== "00") {
+            throw new Error(
+              apiResponse?.header?.resultMsg ||
+              "기상청에서 예보를 받지 못했어요."
+            );
+          }
+
+          const items = apiResponse?.body?.items?.item;
+          if (!Array.isArray(items) || items.length === 0) {
+            throw new Error("예보 데이터가 아직 준비되지 않았어요. 잠시 후 다시 시도해 주세요.");
+          }
+
+          const forecasts = {};
+          for (const item of items) {
+            const key = `${item.fcstDate}_${item.fcstTime}`;
+            if (!forecasts[key]) forecasts[key] = {};
+            forecasts[key][item.category] = item.fcstValue;
+          }
+
+          const now = koreaNow();
+          const today =
+            `${now.getFullYear()}${pad2(now.getMonth() + 1)}${pad2(now.getDate())}`;
+          const currentTime = `${pad2(now.getHours())}00`;
+
+          const todayKeys = Object.keys(forecasts)
+            .filter(key => key.startsWith(today))
+            .sort();
+
+          const selectedKey =
+            todayKeys.find(key => key.split("_")[1] >= currentTime) ||
+            todayKeys[0];
+
+          const forecast = forecasts[selectedKey];
+          if (!forecast) {
+            throw new Error("현재 날짜의 예보를 찾지 못했어요. 잠시 후 다시 시도해 주세요.");
+          }
+
+          const temp = Number(forecast.TMP);
+          const rain = Number(forecast.POP ?? 0);
+          const wind = Number(forecast.WSD ?? 0);
+          const skyCode = String(forecast.SKY ?? "");
+          const rainCode = String(forecast.PTY ?? "0");
+
+          const sky =
+            skyCode === "1" ? "맑음" :
+            skyCode === "3" ? "구름 많음" :
+            skyCode === "4" ? "흐림" : "";
+
+          const precipitation =
+            rainCode === "1" ? "비" :
+            rainCode === "2" ? "비/눈" :
+            rainCode === "3" ? "눈" :
+            rainCode === "4" ? "소나기" : "";
+
+          if (!Number.isFinite(temp)) {
+            throw new Error("기온 정보를 확인할 수 없어요. 잠시 후 다시 시도해 주세요.");
+          }
+
+          profile.temp = temp;
+          profile.rain = rain;
+          profile.wind = wind;
+          profile.sky = sky;
+          profile.pty = precipitation;
+          profile.nx = grid.nx;
+          profile.ny = grid.ny;
+          profile.updatedAt = new Date().toISOString();
+          saveProfile();
+
+          if (status) {
+            status.textContent =
+              `✅ ${sky || "예보 확인"}${precipitation ? " · " + precipitation : ""} · ` +
+              `${temp}℃ · 강수확률 ${rain}% · 바람 ${wind}m/s`;
+          }
+
+          render();
+        } catch (error) {
+          if (status) {
+            status.innerHTML =
+              `<div class="weather-error">${escapeHTML(error.message || "날씨 조회 중 오류가 발생했어요.")}</div>`;
+          }
+        }
+      }, error => {
+        let message = "위치 정보를 가져오지 못했어요.";
+        if (error.code === 1) {
+          message = "위치 권한이 거부됐어요. 브라우저에서 이 사이트의 위치 권한을 허용해 주세요.";
+        } else if (error.code === 2) {
+          message = "현재 위치를 확인할 수 없어요.";
+        } else if (error.code === 3) {
+          message = "위치 확인 시간이 초과됐어요. 다시 시도해 주세요.";
+        }
+
+        if (status) {
+          status.innerHTML =
+            `<div class="weather-error">${escapeHTML(message)}</div>`;
+        }
+      }, {
+        enableHighAccuracy: true,
+        timeout: 15000,
+        maximumAge: 300000
+      });
     }
 
     document.getElementById("tabs").addEventListener("click", event => {
@@ -518,6 +833,46 @@
       window.scrollTo({ top: 0, behavior: "smooth" });
     });
 
+    document.addEventListener("submit", event => {
+      if (event.target.id !== "profileForm") return;
+      event.preventDefault();
+
+      const name = document.getElementById("babyName").value.trim();
+      const birth = document.getElementById("babyBirth").value;
+
+      if (!name || !birth) return;
+
+      profile.name = name;
+      profile.birth = birth;
+      saveProfile();
+      render();
+    });
+
+    async function loadData() {
+      const [devResult, playResult] = await Promise.allSettled([
+        fetch("./development.json").then(response => {
+          if (!response.ok) throw new Error("development.json을 불러오지 못했어요.");
+          return response.json();
+        }),
+        fetch("./play.json").then(response => {
+          if (!response.ok) throw new Error("play.json을 불러오지 못했어요.");
+          return response.json();
+        })
+      ]);
+
+      if (devResult.status === "fulfilled" &&
+          Array.isArray(devResult.value)) {
+        developmentData = devResult.value;
+      }
+
+      if (playResult.status === "fulfilled" &&
+          Array.isArray(playResult.value)) {
+        playData = playResult.value;
+      }
+
+      render();
+    }
+
     render();
     loadData();
 
@@ -525,7 +880,7 @@
         location.protocol === "https:") {
       window.addEventListener("load", () => {
         navigator.serviceWorker.register("./service-worker.js")
-          .catch(error => console.error("서비스 워커 등록 실패:", error));
+          .catch(error => console.warn("서비스 워커 등록 실패:", error));
       });
     }
   </script>
