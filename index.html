@@ -1,98 +1,72 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#fff7f2">
-<meta name="description" content="서윤이의 성장과 일상을 기록하는 육아 앱">
-<title>서윤이의 하루</title>
-<link rel="manifest" href="./manifest.json">
-<link rel="icon" href="./seoyoon-logo.png">
-
-<style>
-:root {
-  --bg:#fffaf7;
-  --card:#fff;
-  --pink:#f5b8c8;
-  --pink-dark:#c96986;
-  --peach:#fff0e7;
-  --text:#493c3b;
-  --muted:#8b7d7a;
-  --line:#f1e4df;
-  --green:#e9f4e9;
-}
-* { box-sizing:border-box; }
-body {
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
-  font-size:15px;
-  line-height:1.65;
-}
-button,input,select { font:inherit; }
-button { cursor:pointer; }
-.app { max-width:650px; margin:0 auto; padding-bottom:90px; }
-header {
-  padding:22px 18px 12px;
-  display:flex;
-  align-items:center;
-  gap:13px;
-}
-.logo {
-  width:58px;
-  height:58px;
-  object-fit:cover;
-  border-radius:50%;
-  background:white;
-  border:2px solid #f8dbe3;
-}
-h1 { margin:0; font-size:22px; line-height:1.35; }
-.subtitle,.muted { color:var(--muted); font-size:13px; }
-.subtitle { font-size:12px; margin-top:3px; }
-.tabs {
-  display:flex;
-  gap:7px;
-  padding:0 16px 12px;
-  overflow-x:auto;
-  scrollbar-width:none;
-}
-.tabs::-webkit-scrollbar { display:none; }
-.tab {
-  border:1px solid var(--line);
-  background:white;
-  color:var(--muted);
-  border-radius:22px;
-  padding:9px 13px;
-  white-space:nowrap;
-  font-size:13px;
-}
-.tab.active {
-  background:var(--pink);
-  border-color:var(--pink);
-  color:#633c49;
-  font-weight:700;
-}
-main { padding:8px 16px 20px; }
-.card {
-  background:var(--card);
-  border:1px solid var(--line);
-  border-radius:20px;
-  padding:17px;
-  margin-bottom:13px;
-  box-shadow:0 5px 18px #6941410f;
-}
-.hero {
-  background:linear-gradient(135deg,#fff0f3,#fff4e9);
-  border:0;
-  padding:22px 19px;
-}
-h2 { font-size:19px; margin:0 0 12px; }
-h3 { font-size:16px; margin:0 0 7px; }
-p { margin:6px 0; }
-.pill {
-  display:inline-block;
-  background:var(--peach);
-  color:#8e5c4e;
-  border-radius:30px;
-  padding:4px
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fff7f2">
+  <meta name="description" content="서윤이의 성장과 하루를 기록하는 육아 앱">
+  <title>서윤이의 하루</title>
+  <link rel="manifest" href="./manifest.json">
+  <style>
+    :root {
+      --bg:#fff9f6;
+      --card:#ffffff;
+      --pink:#f5c1cf;
+      --pink-dark:#b65e7c;
+      --text:#493c3b;
+      --muted:#8c7e7a;
+      --line:#f0e3df;
+      --peach:#fff0e8;
+    }
+    * { box-sizing:border-box; }
+    body {
+      margin:0;
+      color:var(--text);
+      background:var(--bg);
+      font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
+      font-size:15px;
+      line-height:1.7;
+    }
+    button,input,select { font:inherit; }
+    button { cursor:pointer; }
+    .app { max-width:680px; margin:auto; padding-bottom:35px; }
+    header {
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:20px 17px 12px;
+    }
+    .logo {
+      width:55px;
+      height:55px;
+      border-radius:50%;
+      object-fit:cover;
+      background:white;
+      border:2px solid var(--pink);
+    }
+    h1 { font-size:22px; margin:0; line-height:1.4; }
+    h2 { font-size:19px; margin:0 0 12px; }
+    h3 { font-size:16px; margin:0 0 7px; }
+    p { margin:5px 0 10px; }
+    .muted { color:var(--muted); font-size:13px; }
+    .tabs {
+      display:flex;
+      gap:7px;
+      padding:0 15px 12px;
+      overflow-x:auto;
+      scrollbar-width:none;
+    }
+    .tabs::-webkit-scrollbar { display:none; }
+    .tab {
+      flex-shrink:0;
+      padding:9px 13px;
+      border:1px solid var(--line);
+      border-radius:25px;
+      background:white;
+      color:var(--muted);
+      font-size:13px;
+    }
+    .tab.active {
+      background:var(--pink);
+      border-color:var(--pink);
+      color:#633d49;
