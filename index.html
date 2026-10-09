@@ -169,7 +169,7 @@ function renderHome() {
   return `
     <section class="card hero">
       <span class="pill">${formatDate(todayString())}</span>
-      <h2>${esc(profile.name)}야, 오늘도 반가워! 🌸</h2>
+      <h2>${esc(profile.name)}${/[가-힣]$/.test(profile.name) && (function(){const c=profile.name.charCodeAt(profile.name.length-1)-44032;return c>=0&&c<=11171&&c%28!==0;})() ? "아" : "야"}, 오늘도 반가워! 🌸</h2>
       <p>${esc(ageDescription())}</p><p class="muted">오늘도 서윤이의 속도에 맞춰 천천히 함께해요.</p>
     </section>
     ${card("☀️ 오늘의 날씨",weather)}
