@@ -1,0 +1,22 @@
+
+{
+  "id": "/choi-seoyoon-app/",
+  "name": "최서윤",
+  "short_name": "최서윤",
+  "description": "최서윤의 성장과 일상을 위한 육아 앱",
+  "lang": "ko-KR",
+  "start_url": "./",
+  "scope": "/choi-seoyoon-app/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fffaf7",
+  "theme_color": "#fff8f5",
+  "icons": [
+    {
+      "src": "./seoyoon-logo.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
