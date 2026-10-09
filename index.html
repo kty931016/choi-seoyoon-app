@@ -66,7 +66,10 @@ ul { padding-left:21px; }
 <div class="app">
 <header>
   <img class="logo" src="./seoyoon-logo.png" alt="서윤이 로고" onerror="this.style.display='none'">
-  <div><h1>서윤이의 하루 🌷</h1><div class="subtitle">작은 하루가 모여 큰 성장이 되는 중</div></div>
+  <div>
+    <h1>서윤이의 하루 🌷</h1>
+    <div class="subtitle">작은 하루가 모여 큰 성장이 되는 중</div>
+  </div>
 </header>
 <nav id="tabs" class="tabs" aria-label="메뉴"></nav>
 <main id="content"><div class="empty">서윤이의 하루를 준비하고 있어요 ♡</div></main>
@@ -79,9 +82,14 @@ ul { padding-left:21px; }
 const PROFILE_KEY = "choiSeoyoonProfile";
 const FEEDING_KEY = "choiSeoyoonFeeding";
 const DEFAULT_PROFILE = {name:"서윤",birth:"2026-01-13"};
+
 const pageNames = {
-  home:"오늘",season:"계절",dev:"발달",play:"놀이",
-  feeding:"식이 가이드",profile:"우리 아기"
+  home:"오늘",
+  season:"계절",
+  dev:"발달",
+  play:"놀이",
+  feeding:"식이 가이드",
+  profile:"우리 아기"
 };
 
 let profile = readStorage(PROFILE_KEY, DEFAULT_PROFILE);
@@ -93,65 +101,117 @@ let weatherData = null;
 let weatherMessage = "날씨를 확인하려면 아래 버튼을 눌러 주세요.";
 
 function readStorage(key, fallback) {
-  try { return {...fallback,...JSON.parse(localStorage.getItem(key)||"{}")}; }
-  catch { return {...fallback}; }
+  try {
+    return {...fallback,...JSON.parse(localStorage.getItem(key)||"{}")};
+  } catch {
+    return {...fallback};
+  }
 }
+
 function saveStorage(key,value) {
   localStorage.setItem(key,JSON.stringify(value));
 }
+
 function esc(value) {
   return String(value ?? "").replace(/[&<>"']/g,c=>({
     "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
   })[c]);
 }
+
 function todayString() {
   const d=new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
 }
+
 function ageInMonths(birthString) {
   if(!birthString) return null;
-  const b=new Date(birthString+"T12:00:00"),n=new Date();
+  const b=new Date(birthString+"T12:00:00");
+  const n=new Date();
   if(Number.isNaN(b.getTime())||b>n) return null;
   let m=(n.getFullYear()-b.getFullYear())*12+n.getMonth()-b.getMonth();
   if(n.getDate()<b.getDate()) m--;
   return Math.max(0,m);
 }
+
+/* 태어난 날을 생후 1일로 계산 */
+function ageInDays(birthString) {
+  if(!birthString) return null;
+  const birth=new Date(birthString+"T00:00:00");
+  const now=new Date();
+  if(Number.isNaN(birth.getTime())||birth>now) return null;
+
+  const todayMidnight=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  const birthMidnight=new Date(birth.getFullYear(),birth.getMonth(),birth.getDate());
+  return Math.floor((todayMidnight-birthMidnight)/86400000)+1;
+}
+
+/* 받침이 있으면 '아', 받침이 없으면 '야' */
+function vocative(name) {
+  const clean=String(name||"아기").trim();
+  if(!clean) return "아기야";
+
+  const last=clean.charCodeAt(clean.length-1);
+  const code=last-0xAC00;
+  const hasFinal=code>=0&&code<=11171&&code%28!==0;
+
+  return clean+(hasFinal?"아":"야");
+}
+
 function ageDescription() {
   const m=ageInMonths(profile.birth);
-  if(m===null) return "생년월일을 확인해 주세요.";
-  const days=Math.floor((new Date()-new Date(profile.birth+"T00:00:00"))/86400000);
+  const days=ageInDays(profile.birth);
+  if(m===null||days===null) return "생년월일을 확인해 주세요.";
   return `생후 ${m}개월 · ${days}일`;
 }
+
 function formatDate(s) {
   if(!s) return "";
   const d=new Date(s+"T12:00:00");
   return Number.isNaN(d.getTime())?s:`${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일`;
 }
+
 function formatMonthTitle(item) {
   if(!item) return "";
-  const m=Number(item.month),t=String(item.title||"");
-  return Number.isFinite(m)&&m>0&&t.includes("·")?`${m}개월 · ${t.split("·").slice(1).join("·").trim()}`:t;
+  const m=Number(item.month);
+  const t=String(item.title||"");
+  return Number.isFinite(m)&&m>0&&t.includes("·")
+    ?`${m}개월 · ${t.split("·").slice(1).join("·").trim()}`
+    :t;
 }
+
 function getMonthlyItem(data,months) {
   if(!Array.isArray(data)||!data.length||months===null) return null;
   return data.find(x=>Number(x.month)===months)
     ||data.filter(x=>Number(x.month)<=months).sort((a,b)=>Number(b.month)-Number(a.month))[0]
     ||data[0];
 }
+
 function renderTabs() {
   document.getElementById("tabs").innerHTML=Object.entries(pageNames).map(([key,label])=>
     `<button class="tab ${currentPage===key?"active":""}" data-page="${key}">${label}</button>`
   ).join("");
 }
+
 function setPage(page) {
-  currentPage=page; renderTabs(); renderPage();
+  currentPage=page;
+  renderTabs();
+  renderPage();
   window.scrollTo({top:0,behavior:"smooth"});
 }
+
 function card(title,body,extra="") {
   return `<section class="card ${extra}"><h2>${title}</h2>${body}</section>`;
 }
+
 function renderPage() {
-  const renderers={home:renderHome,season:renderSeason,dev:renderDevelopment,play:renderPlay,feeding:renderFeeding,profile:renderProfile};
+  const renderers={
+    home:renderHome,
+    season:renderSeason,
+    dev:renderDevelopment,
+    play:renderPlay,
+    feeding:renderFeeding,
+    profile:renderProfile
+  };
   document.getElementById("content").innerHTML=renderers[currentPage]();
 }
 
@@ -159,38 +219,70 @@ function renderHome() {
   const m=ageInMonths(profile.birth);
   const d=getMonthlyItem(developmentData,m);
   const p=getMonthlyItem(playData,m);
+
   const weather=weatherData
     ? `<div class="row">
         <div class="stat"><strong>${esc(weatherData.temp)}°</strong><span class="muted">기온</span></div>
         <div class="stat"><strong>${esc(weatherData.rain)}%</strong><span class="muted">강수확률</span></div>
         <div class="stat"><strong>${esc(weatherData.wind)}</strong><span class="muted">풍속 m/s</span></div>
-       </div><p>${esc(weatherData.summary)}</p><p class="muted">${esc(weatherData.clothes)}</p>`
-    : `<p id="weather-status" class="muted">${esc(weatherMessage)}</p><button class="btn" id="weather-button">오늘 날씨 확인하기</button>`;
+       </div>
+       <p>${esc(weatherData.summary)}</p>
+       <p class="muted">${esc(weatherData.clothes)}</p>`
+    : `<p id="weather-status" class="muted">${esc(weatherMessage)}</p>
+       <button class="btn" id="weather-button">오늘 날씨 확인하기</button>`;
+
   return `
     <section class="card hero">
       <span class="pill">${formatDate(todayString())}</span>
-      <h2>${esc(profile.name)}${/[가-힣]$/.test(profile.name) && (function(){const c=profile.name.charCodeAt(profile.name.length-1)-44032;return c>=0&&c<=11171&&c%28!==0;})() ? "아" : "야"}, 오늘도 반가워! 🌸</h2>
-      <p>${esc(ageDescription())}</p><p class="muted">오늘도 서윤이의 속도에 맞춰 천천히 함께해요.</p>
+      <h2>${esc(vocative(profile.name))}, 오늘도 반가워! 🌸</h2>
+      <p>${esc(ageDescription())}</p>
+      <p class="muted">오늘도 서윤이의 속도에 맞춰 천천히 함께해요.</p>
     </section>
     ${card("☀️ 오늘의 날씨",weather)}
-    ${card("🌱 이번 달 발달 정보",d?`<strong>${esc(formatMonthTitle(d))}</strong><p>${esc(d.description||"")}</p><button class="btn secondary" data-goto="dev">발달 정보 더 보기</button>`:`<p class="muted">발달 정보를 불러오는 중이에요.</p>`)}
-    ${card("🧸 오늘의 놀이 아이디어",p?`<strong>${esc(formatMonthTitle(p))}</strong><p>${esc(p.description||"")}</p><button class="btn secondary" data-goto="play">놀이 더 보기</button>`:`<p class="muted">놀이 정보를 불러오는 중이에요.</p>`)}
-    ${card("🥣 식이 가이드",`<p>현재 월령에 맞는 식사 진행 방향을 확인해 보세요.</p><button class="btn secondary" data-goto="feeding">식이 가이드 보기</button>`)}
+    ${card("🌱 이번 달 발달 정보",d
+      ?`<strong>${esc(formatMonthTitle(d))}</strong>
+        <p>${esc(d.description||"")}</p>
+        <button class="btn secondary" data-goto="dev">발달 정보 더 보기</button>`
+      :`<p class="muted">발달 정보를 불러오는 중이에요.</p>`)}
+    ${card("🧸 오늘의 놀이 아이디어",p
+      ?`<strong>${esc(formatMonthTitle(p))}</strong>
+        <p>${esc(p.description||"")}</p>
+        <button class="btn secondary" data-goto="play">놀이 더 보기</button>`
+      :`<p class="muted">놀이 정보를 불러오는 중이에요.</p>`)}
+    ${card("🥣 식이 가이드",`<p>현재 월령에 맞는 식사 진행 방향을 확인해 보세요.</p>
+      <button class="btn secondary" data-goto="feeding">식이 가이드 보기</button>`)}
   `;
 }
 
 function renderDevelopment() {
-  if(!developmentData.length) return card("🌱 월령별 발달",`<p class="muted">발달 정보를 불러오는 중이에요.</p>`);
-  const m=ageInMonths(profile.birth),d=getMonthlyItem(developmentData,m);
+  if(!developmentData.length) {
+    return card("🌱 월령별 발달",`<p class="muted">발달 정보를 불러오는 중이에요.</p>`);
+  }
+
+  const m=ageInMonths(profile.birth);
+  const d=getMonthlyItem(developmentData,m);
+
   return card("🌱 월령별 발달 정보",
     `<p class="muted">현재 ${esc(ageDescription())}</p>
-     ${d?`<div class="item"><span class="pill">${esc(d.category||"발달")}</span><h3>${esc(formatMonthTitle(d))}</h3><p>${esc(d.description||"")}</p>${d.sourceUrl?`<p class="small">출처: <a class="source-link" href="${esc(d.sourceUrl)}" target="_blank" rel="noopener">${esc(d.source||"자료 보기")}</a></p>`:""}</div>`:""}
-     ${developmentData.slice().sort((a,b)=>Number(a.month)-Number(b.month)).map(x=>`<div class="item"><strong>${esc(formatMonthTitle(x))}</strong><p>${esc(x.description||"")}</p>${x.sourceUrl?`<a class="source-link" href="${esc(x.sourceUrl)}" target="_blank" rel="noopener">${esc(x.source||"출처")}</a>`:""}</div>`).join("")}`
+     ${d?`<div class="item">
+       <span class="pill">${esc(d.category||"발달")}</span>
+       <h3>${esc(formatMonthTitle(d))}</h3>
+       <p>${esc(d.description||"")}</p>
+       ${d.sourceUrl?`<p class="small">출처: <a class="source-link" href="${esc(d.sourceUrl)}" target="_blank" rel="noopener">${esc(d.source||"자료 보기")}</a></p>`:""}
+     </div>`:""}
+     ${developmentData.slice().sort((a,b)=>Number(a.month)-Number(b.month)).map(x=>
+       `<div class="item">
+         <strong>${esc(formatMonthTitle(x))}</strong>
+         <p>${esc(x.description||"")}</p>
+         ${x.sourceUrl?`<a class="source-link" href="${esc(x.sourceUrl)}" target="_blank" rel="noopener">${esc(x.source||"출처")}</a>`:""}
+       </div>`
+     ).join("")}`
   );
 }
 
 function renderSeason() {
   const m=new Date().getMonth()+1;
+
   const s=[3,4,5].includes(m)
     ?["봄 🌷","얇은 옷을 여러 겹 입히고 아침저녁 기온 차에 대비해요.","꽃가루와 미세먼지가 심한 날에는 외출 후 손과 얼굴을 씻겨 주세요."]
     :[6,7,8].includes(m)
@@ -198,6 +290,7 @@ function renderSeason() {
     :[9,10,11].includes(m)
     ?["가을 🍂","일교차에 맞춰 겉옷을 준비하고 실내외 온도에 따라 조절해요.","건조해지기 쉬우니 피부 보습과 실내 환기를 챙겨 주세요."]
     :["겨울 ❄️","실내에서는 너무 두껍게 입히지 말고 외출 시 보온에 신경 써요.","난방 중에도 환기와 적절한 실내 습도를 유지해요."];
+
   return card("🍃 지금은 "+s[0],`<p>${esc(s[2])}</p>`)
     +card("👕 옷차림 팁",`<p>${esc(s[1])}</p><div class="notice">실제 기온과 아이의 활동량에 따라 조절해 주세요.</div>`)
     +card("🧴 계절별 기본 관리",`<p>목욕 후 보습제를 발라 피부가 건조해지지 않도록 해요.</p><p>주기적으로 환기하고 미세먼지와 기상 상황을 확인해요.</p>`);
@@ -281,18 +374,44 @@ function renderPlay() {
 }
 
 function getFeedingStage(m) {
-  if(m<=5) return {title:"수유 중심 시기",texture:"모유 또는 영아용 조제분유 중심",meals:"아기의 배고픔과 포만감 신호에 맞춰 수유해요.",tips:["일반적으로 생후 약 6개월 무렵 이유보충식을 준비해요.","고개 가누기, 도움을 받아 앉기, 음식을 삼키는 능력 등 준비 신호를 살펴요.","생후 12개월 전에는 꿀을 주지 않아요."]};
-  if(m===6) return {title:"이유식 시작기",texture:"부드럽고 삼키기 쉬운 형태부터 시작",meals:"소량으로 시작해 아기의 반응에 따라 천천히 늘려요.",tips:["철분이 풍부한 고기 등 다양한 식품을 적절한 형태로 제공해요.","새로운 식품은 반응을 살피면서 도입해요.","이유식을 시작해도 모유나 분유 수유를 계속해요."]};
-  if(m<=8) return {title:"이유식 적응기",texture:"으깨거나 부드러운 작은 알갱이가 있는 형태",meals:"하루 2회 안팎부터 아이의 섭취와 발달에 맞춰 조절해요.",tips:["부드러운 질감에서 점차 다양한 질감으로 진행해요.","철분 식품과 채소, 과일 등 여러 식품군을 경험하게 해요.","먹는 양보다 편안하게 먹고 삼키는 과정도 중요해요."]};
-  if(m<=11) return {title:"이유식 확장기",texture:"잇몸으로 으깰 수 있는 부드러운 덩어리",meals:"하루 3회 식사로 점차 정착해 가는 시기예요.",tips:["고기·생선·달걀·콩류 등 다양한 식품을 제공해요.","안전한 크기와 질감의 손으로 집어 먹는 음식도 연습해요.","모유나 분유도 계속 제공하며 섭취량은 개인차를 고려해요."]};
-  return {title:"유아식 전환기",texture:"부드러운 밥과 잘게 자른 가족 음식",meals:"하루 세 끼와 필요에 따른 간식을 아이의 식욕에 맞춰 조절해요.",tips:["만 12개월 전에는 생우유를 주 음료로 사용하지 않아요.","음식은 너무 짜거나 달게 조리하지 않아요.","식사 시간에는 앉아서 먹고 질식 위험을 살펴요.","배고픔과 배부름 신호를 존중하고 억지로 먹이지 않아요."]};
+  if(m<=5) return {
+    title:"수유 중심 시기",texture:"모유 또는 영아용 조제분유 중심",
+    meals:"아기의 배고픔과 포만감 신호에 맞춰 수유해요.",
+    tips:["일반적으로 생후 약 6개월 무렵 이유보충식을 준비해요.","고개 가누기, 도움을 받아 앉기, 음식을 삼키는 능력 등 준비 신호를 살펴요.","생후 12개월 전에는 꿀을 주지 않아요."]
+  };
+  if(m===6) return {
+    title:"이유식 시작기",texture:"부드럽고 삼키기 쉬운 형태부터 시작",
+    meals:"소량으로 시작해 아기의 반응에 따라 천천히 늘려요.",
+    tips:["철분이 풍부한 고기 등 다양한 식품을 적절한 형태로 제공해요.","새로운 식품은 반응을 살피면서 도입해요.","이유식을 시작해도 모유나 분유 수유를 계속해요."]
+  };
+  if(m<=8) return {
+    title:"이유식 적응기",texture:"으깨거나 부드러운 작은 알갱이가 있는 형태",
+    meals:"하루 2회 안팎부터 아이의 섭취와 발달에 맞춰 조절해요.",
+    tips:["부드러운 질감에서 점차 다양한 질감으로 진행해요.","철분 식품과 채소, 과일 등 여러 식품군을 경험하게 해요.","먹는 양보다 편안하게 먹고 삼키는 과정도 중요해요."]
+  };
+  if(m<=11) return {
+    title:"이유식 확장기",texture:"잇몸으로 으깰 수 있는 부드러운 덩어리",
+    meals:"하루 3회 식사로 점차 정착해 가는 시기예요.",
+    tips:["고기·생선·달걀·콩류 등 다양한 식품을 제공해요.","안전한 크기와 질감의 손으로 집어 먹는 음식도 연습해요.","모유나 분유도 계속 제공하며 섭취량은 개인차를 고려해요."]
+  };
+  return {
+    title:"유아식 전환기",texture:"부드러운 밥과 잘게 자른 가족 음식",
+    meals:"하루 세 끼와 필요에 따른 간식을 아이의 식욕에 맞춰 조절해요.",
+    tips:["만 12개월 전에는 생우유를 주 음료로 사용하지 않아요.","음식은 너무 짜거나 달게 조리하지 않아요.","식사 시간에는 앉아서 먹고 질식 위험을 살펴요.","배고픔과 배부름 신호를 존중하고 억지로 먹이지 않아요."]
+  };
 }
+
 function renderFeeding() {
   const m=ageInMonths(profile.birth);
   if(m===null) return card("🥣 식이 가이드",`<p>우리 아기 메뉴에서 생년월일을 확인해 주세요.</p><button class="btn" data-goto="profile">생년월일 확인하기</button>`);
   if(m>24) return card("🥣 식이 가이드",`<p>월령별 식이 가이드는 생후 24개월까지 제공해요.</p><p class="muted">이후에는 성장과 식습관에 맞춘 일반적인 가족 식사를 중심으로 살펴보세요.</p>`);
+
   const s=getFeedingStage(m),r=feedingRecord;
-  return `<section class="card hero"><span class="pill">생후 ${m}개월</span><h2>🥣 ${esc(s.title)}</h2><p>${esc(s.texture)}</p><p class="muted">${esc(s.meals)}</p></section>
+  return `
+    <section class="card hero">
+      <span class="pill">생후 ${m}개월</span><h2>🥣 ${esc(s.title)}</h2>
+      <p>${esc(s.texture)}</p><p class="muted">${esc(s.meals)}</p>
+    </section>
     ${card("🌱 지금 기억할 점",`<ul>${s.tips.map(t=>`<li>${esc(t)}</li>`).join("")}</ul>`)}
     ${card("🍼 월령별 진행 방향",`
       <div class="item"><strong>생후 0~5개월</strong><p>모유 또는 영아용 조제분유가 주된 영양 공급원이에요.</p></div>
@@ -311,9 +430,17 @@ function renderFeeding() {
         <button class="btn" type="submit">오늘 기록 저장하기</button>
       </form>
       ${r.date?`<div class="notice green-note"><strong>저장된 기록 · ${esc(r.date)}</strong><br>분유: ${r.formula===""||r.formula==null?"미입력":esc(r.formula)+"mL"}<br>식사: ${r.mealCount==null||r.mealCount===""?"미입력":esc(r.mealCount)+"회"}<br>한 끼 평균: ${r.mealAmount===""||r.mealAmount==null?"미입력":esc(r.mealAmount)+"g"}</div>`:""}`)}
-    ${card("⚠️ 안전하게 먹이기",`<ul><li>생후 12개월 전에는 꿀을 주지 않아요.</li><li>통견과류, 통포도, 단단한 생채소 등 질식 위험이 있는 음식은 피하거나 안전한 형태로 준비해요.</li><li>새 식품 후 이상 반응이 나타나면 섭취를 중단하고 상태를 확인해요.</li><li>분유량이나 이유식량을 월령표만 보고 갑자기 줄이거나 늘리지 않아요.</li></ul><p class="muted">성장·변비·알레르기·삼킴 문제가 걱정된다면 소아청소년과 의료진과 상의해 주세요.</p>`)}
+    ${card("⚠️ 안전하게 먹이기",`
+      <ul>
+        <li>생후 12개월 전에는 꿀을 주지 않아요.</li>
+        <li>통견과류, 통포도, 단단한 생채소 등 질식 위험이 있는 음식은 피하거나 안전한 형태로 준비해요.</li>
+        <li>새 식품 후 이상 반응이 나타나면 섭취를 중단하고 상태를 확인해요.</li>
+        <li>분유량이나 이유식량을 월령표만 보고 갑자기 줄이거나 늘리지 않아요.</li>
+      </ul>
+      <p class="muted">성장·변비·알레르기·삼킴 문제가 걱정된다면 소아청소년과 의료진과 상의해 주세요.</p>`)}
   `;
 }
+
 function renderProfile() {
   return card("👶 우리 아기 정보",`
     <form id="profile-form">
@@ -327,9 +454,10 @@ function renderProfile() {
 
 /* 기상청 단기예보 */
 const KMA_SERVICE_KEY="f053b7a6559c24052eea0aa2dfa09761052b74ab2ba626d78ebed51de41bf3ea";
+
 function gridFromCoordinates(lat,lon) {
-  const RE=6371.00877,GRID=5.0,DEG=Math.PI/180;
-  const slat1=30*DEG,slat2=60*DEG,olon=126*DEG,olat=38*DEG,XO=43,YO=136,re=RE/GRID;
+  const RE=6371.00877,DEG=Math.PI/180;
+  const slat1=30*DEG,slat2=60*DEG,olon=126*DEG,olat=38*DEG,XO=43,YO=136,re=RE/5;
   let sn=Math.log(Math.cos(slat1)/Math.cos(slat2))/Math.log(Math.tan(Math.PI/4+slat2/2)/Math.tan(Math.PI/4+slat1/2));
   let sf=Math.pow(Math.tan(Math.PI/4+slat1/2),sn)*Math.cos(slat1)/sn;
   let ro=re*sf/Math.pow(Math.tan(Math.PI/4+olat/2),sn);
@@ -340,44 +468,82 @@ function gridFromCoordinates(lat,lon) {
   theta*=sn;
   return {nx:Math.floor(ra*Math.sin(theta)+XO+0.5),ny:Math.floor(ro-ra*Math.cos(theta)+YO+0.5)};
 }
+
 function koreaNow() {
   return new Date(new Date().toLocaleString("en-US",{timeZone:"Asia/Seoul"}));
 }
+
 function getBaseTime() {
   const n=koreaNow(),times=[2300,2000,1700,1400,1100,800,500,200],cur=n.getHours()*100+n.getMinutes();
   let t=times.find(x=>cur>=x),d=new Date(n);
   if(t===undefined){d.setDate(d.getDate()-1);t=2300;}
   return {date:`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,"0")}${String(d.getDate()).padStart(2,"0")}`,time:String(t).padStart(4,"0")};
 }
+
 async function getWeather() {
   weatherMessage="현재 위치와 날씨를 확인하고 있어요.";
   renderPage();
+
   if(!navigator.geolocation) {
-    weatherMessage="이 브라우저에서는 위치 확인을 지원하지 않아요."; renderPage(); return;
+    weatherMessage="이 브라우저에서는 위치 확인을 지원하지 않아요.";
+    renderPage();
+    return;
   }
+
   navigator.geolocation.getCurrentPosition(async pos=>{
     try {
-      const {nx,ny}=gridFromCoordinates(pos.coords.latitude,pos.coords.longitude),base=getBaseTime();
+      const {nx,ny}=gridFromCoordinates(pos.coords.latitude,pos.coords.longitude);
+      const base=getBaseTime();
       const url=new URL("https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst");
-      Object.entries({serviceKey:KMA_SERVICE_KEY,pageNo:1,numOfRows:1000,dataType:"JSON",base_date:base.date,base_time:base.time,nx,ny}).forEach(([k,v])=>url.searchParams.set(k,v));
-      const response=await fetch(url),json=await response.json(),items=json?.response?.body?.items?.item||[];
-      if(!items.length)throw new Error("no forecast");
-      const n=koreaNow(),date=`${n.getFullYear()}${String(n.getMonth()+1).padStart(2,"0")}${String(n.getDate()).padStart(2,"0")}`,hour=n.getHours();
-      const target=String(hour).padStart(2,"0")+"00";
+
+      Object.entries({
+        serviceKey:KMA_SERVICE_KEY,pageNo:1,numOfRows:1000,
+        dataType:"JSON",base_date:base.date,base_time:base.time,nx,ny
+      }).forEach(([k,v])=>url.searchParams.set(k,v));
+
+      const response=await fetch(url);
+      const json=await response.json();
+      const items=json?.response?.body?.items?.item||[];
+      if(!items.length) throw new Error("no forecast");
+
+      const n=koreaNow();
+      const date=`${n.getFullYear()}${String(n.getMonth()+1).padStart(2,"0")}${String(n.getDate()).padStart(2,"0")}`;
+      const target=String(n.getHours()).padStart(2,"0")+"00";
+
       function nearest(cat) {
         const a=items.filter(x=>x.category===cat&&x.fcstDate===date);
         a.sort((x,y)=>Math.abs(Number(x.fcstTime)-Number(target))-Math.abs(Number(y.fcstTime)-Number(target)));
         return a.length?a[0].fcstValue:null;
       }
+
       const temp=nearest("TMP"),rain=nearest("POP"),wind=nearest("WSD"),sky=nearest("SKY"),pty=nearest("PTY");
-      const summary=pty&&Number(pty)>0?(Number(pty)===3||Number(pty)===7?"눈이나 진눈깨비 예보가 있어요.":"비가 내릴 가능성이 있어요."):sky===null?"날씨 정보를 확인했어요.":Number(sky)<=5?"대체로 맑은 하늘이에요.":Number(sky)<=8?"구름이 조금 있을 수 있어요.":"흐린 날씨가 예상돼요.";
+      const summary=pty&&Number(pty)>0
+        ?(Number(pty)===3||Number(pty)===7?"눈이나 진눈깨비 예보가 있어요.":"비가 내릴 가능성이 있어요.")
+        :sky===null?"날씨 정보를 확인했어요."
+        :Number(sky)<=5?"대체로 맑은 하늘이에요."
+        :Number(sky)<=8?"구름이 조금 있을 수 있어요.":"흐린 날씨가 예상돼요.";
+
       let clothes="외출 전 실제 기온과 바람을 확인해 주세요.";
-      if(temp!==null){const t=Number(temp);clothes=t<5?"따뜻한 겉옷과 보온에 신경 써 주세요.":t<12?"겉옷을 준비해 주세요.":t<20?"얇은 옷을 여러 겹 입혀 조절해 주세요.":t<27?"통풍이 잘되는 옷을 입히고 땀을 확인해요.":"더운 시간대 외출을 피하고 시원하게 입혀 주세요.";}
+      if(temp!==null) {
+        const t=Number(temp);
+        clothes=t<5?"따뜻한 겉옷과 보온에 신경 써 주세요."
+          :t<12?"겉옷을 준비해 주세요."
+          :t<20?"얇은 옷을 여러 겹 입혀 조절해 주세요."
+          :t<27?"통풍이 잘되는 옷을 입히고 땀을 확인해요."
+          :"더운 시간대 외출을 피하고 시원하게 입혀 주세요.";
+      }
+
       weatherData={temp:temp??"—",rain:rain??"—",wind:wind??"—",summary,clothes};
-      weatherMessage="";renderPage();
-    }catch(e){weatherMessage="날씨를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.";renderPage();}
+      weatherMessage="";
+      renderPage();
+    } catch(e) {
+      weatherMessage="날씨를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.";
+      renderPage();
+    }
   },err=>{
-    weatherMessage=err.code===1?"위치 권한이 허용되지 않았어요. 브라우저 설정에서 위치 권한을 허용해 주세요.":"현재 위치를 확인하지 못했어요. 다시 시도해 주세요.";
+    weatherMessage=err.code===1
+      ?"위치 권한이 허용되지 않았어요. 브라우저 설정에서 위치 권한을 허용해 주세요."
+      :"현재 위치를 확인하지 못했어요. 다시 시도해 주세요.";
     renderPage();
   },{enableHighAccuracy:false,timeout:12000,maximumAge:600000});
 }
@@ -387,34 +553,62 @@ async function loadData() {
     fetch("./development.json").then(r=>{if(!r.ok)throw Error();return r.json();}),
     fetch("./play.json").then(r=>{if(!r.ok)throw Error();return r.json();})
   ]);
-  if(dev.status==="fulfilled"&&Array.isArray(dev.value))developmentData=dev.value;
-  if(play.status==="fulfilled"&&Array.isArray(play.value))playData=play.value;
+  if(dev.status==="fulfilled"&&Array.isArray(dev.value)) developmentData=dev.value;
+  if(play.status==="fulfilled"&&Array.isArray(play.value)) playData=play.value;
   renderPage();
 }
+
 document.getElementById("tabs").addEventListener("click",e=>{
-  const b=e.target.closest("[data-page]");if(b)setPage(b.dataset.page);
+  const b=e.target.closest("[data-page]");
+  if(b) setPage(b.dataset.page);
 });
+
 document.getElementById("content").addEventListener("click",e=>{
   const g=e.target.closest("[data-goto]");
   if(g){setPage(g.dataset.goto);return;}
-  if(e.target.closest("#weather-button"))getWeather();
+  if(e.target.closest("#weather-button")) getWeather();
 });
+
 document.getElementById("content").addEventListener("submit",e=>{
   e.preventDefault();
+
   if(e.target.id==="profile-form") {
-    const name=document.getElementById("baby-name").value.trim(),birth=document.getElementById("baby-birth").value;
-    if(!name||!birth||birth>todayString()){alert("이름과 올바른 생년월일을 입력해 주세요.");return;}
-    profile={name,birth};saveStorage(PROFILE_KEY,profile);renderTabs();renderPage();alert("아기 정보가 저장됐어요.");
+    const name=document.getElementById("baby-name").value.trim();
+    const birth=document.getElementById("baby-birth").value;
+
+    if(!name||!birth||birth>todayString()) {
+      alert("이름과 올바른 생년월일을 입력해 주세요.");
+      return;
+    }
+
+    profile={name,birth};
+    saveStorage(PROFILE_KEY,profile);
+    renderTabs();
+    renderPage();
+    alert("아기 정보가 저장됐어요.");
   }
+
   if(e.target.id==="feeding-form") {
-    const f=document.getElementById("formula").value,a=document.getElementById("meal-amount").value;
-    feedingRecord={date:document.getElementById("feed-date").value,formula:f===""?"":Number(f),mealCount:Number(document.getElementById("meal-count").value),mealAmount:a===""?"":Number(a)};
-    saveStorage(FEEDING_KEY,feedingRecord);renderPage();alert("오늘의 섭취 기록을 저장했어요.");
+    const f=document.getElementById("formula").value;
+    const a=document.getElementById("meal-amount").value;
+
+    feedingRecord={
+      date:document.getElementById("feed-date").value,
+      formula:f===""?"":Number(f),
+      mealCount:Number(document.getElementById("meal-count").value),
+      mealAmount:a===""?"":Number(a)
+    };
+
+    saveStorage(FEEDING_KEY,feedingRecord);
+    renderPage();
+    alert("오늘의 섭취 기록을 저장했어요.");
   }
 });
+
 renderTabs();
 renderPage();
 loadData();
+
 if("serviceWorker" in navigator&&location.protocol==="https:") {
   window.addEventListener("load",()=>navigator.serviceWorker.register("./service-worker.js").catch(()=>{}));
 }
