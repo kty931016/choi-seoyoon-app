@@ -1,298 +1,533 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#fff5f5">
+  <meta name="theme-color" content="#fff8f5">
   <meta name="description" content="최서윤의 성장과 일상을 위한 육아 앱">
-  <title>최서윤</title>
   <link rel="manifest" href="./manifest.json">
+  <title>최서윤 🌷</title>
+
   <style>
     :root {
-      --pink: #f5b8c8;
-      --pink-light: #fff0f4;
-      --cream: #fffaf6;
-      --ink: #493d40;
-      --muted: #887b80;
-      --white: #ffffff;
+      --bg: #fffaf7;
+      --card: #ffffff;
+      --accent: #e89b91;
+      --accent-light: #fff0ec;
+      --ink: #493b39;
+      --muted: #8e817e;
+      --line: #f0e3df;
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
-      background: var(--cream);
+      background: var(--bg);
       color: var(--ink);
-      font-family: system-ui, -apple-system, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Noto Sans KR",
+        "Malgun Gothic", sans-serif;
+      line-height: 1.65;
     }
 
-    button { font: inherit; cursor: pointer; }
+    button {
+      font: inherit;
+      cursor: pointer;
+    }
 
     .app {
-      max-width: 680px;
+      max-width: 620px;
       min-height: 100vh;
       margin: auto;
-      padding: 22px 18px 100px;
+      padding: 20px 16px 100px;
     }
 
-    header { text-align: center; }
+    header {
+      text-align: center;
+      padding: 10px 0 20px;
+    }
 
     .logo {
       width: 94px;
       height: 94px;
-      border-radius: 28px;
       object-fit: cover;
-      background: var(--pink-light);
-      margin: 8px auto;
+      border-radius: 50%;
+      border: 4px solid white;
+      box-shadow: 0 3px 15px #d8b7ad55;
     }
 
-    h1 { font-size: 27px; margin: 6px 0; }
-    .subtitle { color: var(--muted); font-size: 14px; }
-
-    .hero {
-      margin-top: 24px;
-      padding: 23px;
-      border-radius: 25px;
-      background: linear-gradient(135deg, #ffe6ed, #fff5e9);
+    header h1 {
+      margin: 8px 0 0;
+      font-size: 25px;
     }
 
-    .hero h2 { margin: 0 0 8px; font-size: 23px; }
-    .hero p { line-height: 1.7; margin: 6px 0; }
-
-    .section-title { font-size: 19px; margin: 26px 0 12px; }
-
-    .card {
-      background: var(--white);
-      border: 1px solid #f3e8e8;
-      border-radius: 20px;
-      padding: 17px;
-      margin-bottom: 12px;
-      line-height: 1.65;
-    }
-
-    .card h3 { margin: 0 0 8px; font-size: 17px; }
-    .muted { color: var(--muted); font-size: 13px; }
-    .tag {
-      display: inline-block;
-      background: var(--pink-light);
-      border-radius: 20px;
-      padding: 4px 10px;
-      font-size: 12px;
-      margin-bottom: 8px;
+    .sub {
+      color: var(--muted);
+      font-size: 13px;
     }
 
     .tabs {
-      position: fixed;
-      z-index: 10;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100%;
-      max-width: 680px;
-      display: flex;
-      justify-content: space-around;
-      padding: 10px 4px calc(10px + env(safe-area-inset-bottom));
-      background: rgba(255,255,255,.97);
-      border-top: 1px solid #f1e5e8;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 5px;
+      margin-bottom: 20px;
     }
 
     .tab {
-      border: 0;
-      background: transparent;
-      color: var(--muted);
-      padding: 7px 3px;
-      border-radius: 12px;
-      font-size: 12px;
-      min-width: 55px;
-    }
-
-    .tab .emoji { display: block; font-size: 21px; margin-bottom: 3px; }
-    .tab.active { background: var(--pink-light); color: #a74765; font-weight: 700; }
-
-    .item-button {
-      border: 0;
-      width: 100%;
-      text-align: left;
-      background: transparent;
-      color: inherit;
-      padding: 0;
-    }
-
-    .notice { font-size: 13px; color: var(--muted); line-height: 1.6; }
-    input {
-      width: 100%;
-      padding: 12px;
-      margin: 6px 0 14px;
-      border: 1px solid #eadde0;
+      padding: 10px 2px;
+      border: 1px solid var(--line);
       border-radius: 12px;
       background: white;
+      color: var(--muted);
+      font-size: 12px;
     }
 
-    .primary {
-      border: 0;
-      border-radius: 12px;
-      background: var(--pink);
-      color: #493039;
-      padding: 12px 18px;
+    .tab.active {
+      background: var(--accent-light);
+      color: #a95f56;
+      border-color: var(--accent);
       font-weight: 700;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #fff0ec, #fff9e9);
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .hero h2 {
+      margin: 4px 0 8px;
+      font-size: 22px;
+    }
+
+    .hero p {
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .badge {
+      display: inline-block;
+      color: #a95f56;
+      background: white;
+      border-radius: 30px;
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 17px;
+      padding: 16px;
+      margin-bottom: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    .card h3 {
+      margin: 0 0 8px;
+      font-size: 17px;
+    }
+
+    .card p {
+      margin: 7px 0;
+      font-size: 14px;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 12px !important;
+    }
+
+    .section-title {
+      font-size: 18px;
+      margin: 22px 0 10px;
+    }
+
+    .source {
+      display: inline-block;
+      color: #a95f56;
+      font-size: 12px;
+      margin-top: 8px;
+      text-decoration: underline;
+    }
+
+    .notice {
+      background: #fff4e7;
+      border-radius: 12px;
+      padding: 12px;
+      color: #78634d;
+      font-size: 12px;
+      margin-bottom: 14px;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 30px 12px;
+      color: var(--muted);
+      background: white;
+      border-radius: 16px;
+    }
+
+    .profile-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid var(--line);
+      padding: 10px 0;
+      font-size: 14px;
+    }
+
+    footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #ffffffef;
+      border-top: 1px solid var(--line);
+      padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+      text-align: center;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 25px 10px;
+      color: var(--muted);
     }
   </style>
 </head>
+
 <body>
-<div class="app">
-  <header>
-    <img class="logo" src="./seoyoon-logo.png" alt="서윤이 로고"
-      onerror="this.style.display='none'">
-    <h1>최서윤 🌷</h1>
-    <div class="subtitle">서윤이와 함께 자라는 하루</div>
-  </header>
+  <div class="app">
+    <header>
+      <img class="logo" src="./seoyoon-logo.png" alt="서윤이 얼굴">
+      <h1>최서윤 🌷</h1>
+      <div class="sub">서윤이의 성장과 일상을 기록해요</div>
+    </header>
 
-  <main id="content" aria-live="polite"></main>
-</div>
+    <nav class="tabs" id="tabs" aria-label="메뉴"></nav>
+    <main id="main">
+      <div class="loading">서윤이 정보를 불러오는 중이에요 🌷</div>
+    </main>
+  </div>
 
-<nav class="tabs" aria-label="주 메뉴">
-  <button class="tab active" data-tab="today"><span class="emoji">☀️</span>오늘</button>
-  <button class="tab" data-tab="season"><span class="emoji">🌿</span>계절</button>
-  <button class="tab" data-tab="development"><span class="emoji">🌱</span>발달</button>
-  <button class="tab" data-tab="play"><span class="emoji">🧸</span>놀이</button>
-  <button class="tab" data-tab="baby"><span class="emoji">👶</span>우리 아기</button>
-</nav>
+  <footer>우리 아기의 속도에 맞춰 천천히 함께해요 💗</footer>
 
-<script>
-const BABY_BIRTHDAY = "2026-01-13";
-const content = document.getElementById("content");
-let currentTab = "today";
-let developmentData = [];
-let playData = [];
+  <script>
+    const BABY_NAME = "서윤";
+    const BIRTH_DATE = "2026-01-13";
 
-function getAge() {
-  const birth = new Date(BABY_BIRTHDAY + "T00:00:00");
-  const now = new Date();
-  let months = (now.getFullYear() - birth.getFullYear()) * 12
-    + now.getMonth() - birth.getMonth();
+    let currentPage = "home";
+    let developmentData = [];
+    let playData = [];
 
-  if (now.getDate() < birth.getDate()) months--;
-  const monthDate = new Date(birth);
-  monthDate.setMonth(monthDate.getMonth() + months);
-  const days = Math.max(0, Math.floor((now - monthDate) / 86400000));
-  const totalDays = Math.max(0, Math.floor((now - birth) / 86400000));
+    const pageNames = {
+      home: "오늘",
+      season: "계절",
+      dev: "발달",
+      play: "놀이",
+      profile: "우리 아기"
+    };
 
-  return { months: Math.max(0, months), days, totalDays };
-}
+    function escapeHTML(value) {
+      return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      })[char]);
+    }
 
-function card(title, body, tag = "") {
-  return `<article class="card">
-    ${tag ? `<span class="tag">${tag}</span>` : ""}
-    <h3>${title}</h3>${body}
-  </article>`;
-}
+    function getAge() {
+      const birth = new Date(BIRTH_DATE + "T00:00:00");
+      const today = new Date();
 
-function render() {
-  document.querySelectorAll(".tab").forEach(button => {
-    button.classList.toggle("active", button.dataset.tab === currentTab);
-  });
+      let months =
+        (today.getFullYear() - birth.getFullYear()) * 12 +
+        today.getMonth() - birth.getMonth();
 
-  const age = getAge();
-  let html = "";
+      if (today.getDate() < birth.getDate()) {
+        months--;
+      }
 
-  if (currentTab === "today") {
-    html = `
-      <section class="hero">
-        <h2>오늘의 서윤이 💗</h2>
-        <p>태어난 지 ${age.totalDays}일</p>
-        <p>${age.months}개월 ${age.days}일</p>
-        <p class="muted">오늘도 서윤이만의 속도로 자라고 있어요.</p>
-      </section>
-      <h2 class="section-title">오늘의 육아</h2>
-      ${card("오늘의 날씨", "날씨 정보 기능을 연결할 예정이에요.", "날씨")}
-      ${card("오늘의 기록", "서윤이의 수면, 식사, 기분을 기록하는 기능을 준비 중이에요.", "기록")}
-    `;
-  }
+      return Math.max(0, months);
+    }
 
-  if (currentTab === "season") {
-    html = `<h2 class="section-title">계절과 외출 🌿</h2>
-      ${card("날씨에 맞는 옷차림", "현재 위치의 날씨를 연결한 뒤 기온에 맞는 옷차림을 안내할게요.")}
-      ${card("계절별 육아 팁", "외출 준비물과 계절별 주의사항을 별도 데이터로 관리할 예정이에요.")}`;
-  }
+    /*
+      핵심 수정:
+      JSON의 제목이 '한 달 · ...', '열두 달 · ...'처럼
+      한글 숫자로 되어 있어도 month 값을 사용해
+      '1개월 · ...', '12개월 · ...'로 표시합니다.
+    */
+    function formatMonthTitle(item) {
+      const title = String(item.title || "발달 정보");
+      const month = Number(item.month);
 
-  if (currentTab === "development") {
-    const monthItems = developmentData.filter(item =>
-      item.month === age.months
-    );
-    html = `<h2 class="section-title">월령별 발달 🌱</h2>
-      <p class="notice">현재 월령: ${age.months}개월 · 발달 속도에는 개인차가 있어요.</p>`;
-    html += monthItems.length
-      ? monthItems.map(item => card(
-          item.title || "발달 정보",
-          `<p>${item.description || ""}</p><p class="muted">${item.source || ""}</p>`,
-          item.category || ""
-        )).join("")
-      : card("발달 자료 준비 중", "신뢰할 수 있는 자료를 출처와 함께 연결할 예정이에요.");
-  }
+      if (!Number.isFinite(month)) {
+        return escapeHTML(title);
+      }
 
-  if (currentTab === "play") {
-    const monthItems = playData.filter(item =>
-      !item.month || item.month === age.months
-    );
-    html = `<h2 class="section-title">서윤이랑 놀아요 🧸</h2>`;
-    html += monthItems.length
-      ? monthItems.map(item => card(
-          item.title || "놀이",
-          `<p>${item.description || ""}</p>
-           <p><b>준비물:</b> ${item.materials || "자료 확인 중"}</p>
-           <p><b>놀이 방법:</b> ${item.steps || "자료 확인 중"}</p>
-           <p class="muted">${item.source || ""}</p>`,
-          item.category || "놀이"
-        )).join("")
-      : card("놀이 자료 준비 중", "월령에 맞는 놀이 방법과 안전 수칙을 연결할 예정이에요.");
-  }
+      if (month === 0) {
+        return escapeHTML(title);
+      }
 
-  if (currentTab === "baby") {
-    html = `<h2 class="section-title">우리 아기 👶</h2>
-      ${card("서윤이 프로필", `생년월일: 2026년 1월 13일<br>
-        현재 월령: ${age.months}개월 ${age.days}일<br>
-        총 ${age.totalDays}일째 함께하는 중이에요.`)}
-      ${card("성장 기록", "키와 몸무게를 기록하는 기능은 다음 단계에서 추가할게요.")}`;
-  }
+      const separator = title.indexOf("·");
+      const rest = separator >= 0
+        ? title.slice(separator + 1).trim()
+        : title;
 
-  content.innerHTML = html;
-}
+      return `${month}개월 · ${escapeHTML(rest)}`;
+    }
 
-document.querySelectorAll(".tab").forEach(button => {
-  button.addEventListener("click", () => {
-    currentTab = button.dataset.tab;
-    render();
-  });
-});
+    function renderTabs() {
+      document.getElementById("tabs").innerHTML =
+        Object.entries(pageNames).map(([id, name]) => `
+          <button
+            class="tab ${currentPage === id ? "active" : ""}"
+            data-page="${id}"
+            aria-current="${currentPage === id ? "page" : "false"}"
+          >${name}</button>
+        `).join("");
+    }
 
-async function loadData() {
-  try {
-    const response = await fetch("./development.json");
-    if (response.ok) developmentData = await response.json();
-  } catch (error) {
-    console.info("발달 데이터 파일은 다음 단계에서 연결합니다.");
-  }
+    function renderHome() {
+      const age = getAge();
 
-  try {
-    const response = await fetch("./play.json");
-    if (response.ok) playData = await response.json();
-  } catch (error) {
-    console.info("놀이 데이터 파일은 다음 단계에서 연결합니다.");
-  }
+      document.getElementById("main").innerHTML = `
+        <section class="hero">
+          <span class="badge">오늘의 서윤이</span>
+          <h2>서윤이는 ${age}개월이에요 👶</h2>
+          <p>오늘도 서윤이의 성장과 작은 변화를 함께 살펴봐요.</p>
+        </section>
 
-  render();
-}
+        <h2 class="section-title">🌱 지금 시기 발달</h2>
+        <div id="homeDevelopment"></div>
 
-if ("serviceWorker" in navigator && location.protocol === "https:") {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./service-worker.js").catch(error => {
-      console.info("서비스 워커는 설정 단계에서 연결합니다.", error);
+        <h2 class="section-title">🎈 오늘의 놀이</h2>
+        <div id="homePlay"></div>
+
+        <div class="notice">
+          발달 정보는 아이마다 다른 성장 속도를 이해하기 위한 참고 자료예요.
+          한 가지 행동만으로 발달 지연 여부를 판단하지 마세요.
+        </div>
+      `;
+
+      const dev = developmentData.find(
+        item => Number(item.month) === age
+      );
+
+      const play = playData.find(
+        item => Number(item.month) === age
+      );
+
+      document.getElementById("homeDevelopment").innerHTML = dev
+        ? renderDevelopmentCard(dev)
+        : `<div class="empty">해당 월령의 발달 정보를 준비하고 있어요.</div>`;
+
+      document.getElementById("homePlay").innerHTML = play
+        ? renderPlayCard(play)
+        : `<div class="empty">해당 월령의 놀이 정보가 아직 없어요.</div>`;
+    }
+
+    function renderDevelopmentCard(item) {
+      const sourceLink = item.sourceUrl
+        ? `<a class="source" href="${escapeHTML(item.sourceUrl)}"
+             target="_blank" rel="noopener noreferrer">
+             출처 확인하기 ↗
+           </a>`
+        : "";
+
+      return `
+        <article class="card">
+          <h3>${formatMonthTitle(item)}</h3>
+          <p>${escapeHTML(item.description || "")}</p>
+          ${item.source
+            ? `<p class="muted">출처: ${escapeHTML(item.source)}</p>`
+            : ""}
+          ${sourceLink}
+        </article>
+      `;
+    }
+
+    function renderPlayCard(item) {
+      const sourceLink = item.sourceUrl
+        ? `<a class="source" href="${escapeHTML(item.sourceUrl)}"
+             target="_blank" rel="noopener noreferrer">
+             출처 확인하기 ↗
+           </a>`
+        : "";
+
+      return `
+        <article class="card">
+          <h3>${escapeHTML(item.title || "오늘의 놀이")}</h3>
+          <p>${escapeHTML(item.description || item.content || "")}</p>
+          ${sourceLink}
+        </article>
+      `;
+    }
+
+    function renderDevelopmentPage() {
+      const age = getAge();
+      const item = developmentData.find(
+        entry => Number(entry.month) === age
+      );
+
+      document.getElementById("main").innerHTML = `
+        <section class="hero">
+          <span class="badge">월령별 발달</span>
+          <h2>${age}개월 발달 살펴보기 👶</h2>
+          <p>서윤이의 현재 월령에 해당하는 내용을 확인해요.</p>
+        </section>
+
+        <div class="notice">
+          발달 항목은 참고용 관찰 가이드예요.
+          모든 아이가 같은 시기에 같은 행동을 보이는 것은 아니에요.
+        </div>
+
+        ${item
+          ? renderDevelopmentCard(item)
+          : `<div class="empty">이 월령의 발달 정보를 찾을 수 없어요.</div>`}
+      `;
+    }
+
+    function renderPlayPage() {
+      const age = getAge();
+      const item = playData.find(
+        entry => Number(entry.month) === age
+      );
+
+      document.getElementById("main").innerHTML = `
+        <section class="hero">
+          <span class="badge">월령별 놀이</span>
+          <h2>${age}개월 놀이 🎈</h2>
+          <p>놀이를 통해 서윤이와 즐겁게 상호작용해요.</p>
+        </section>
+
+        ${item
+          ? renderPlayCard(item)
+          : `<div class="empty">
+              놀이 정보가 아직 준비되지 않았어요.<br>
+              play.json 파일을 추가하면 이곳에 표시돼요.
+            </div>`}
+      `;
+    }
+
+    function renderSeasonPage() {
+      const age = getAge();
+
+      document.getElementById("main").innerHTML = `
+        <section class="hero">
+          <span class="badge">계절과 일상</span>
+          <h2>계절을 함께 느껴봐요 🍂</h2>
+          <p>현재 ${age}개월인 서윤이와 무리하지 않고 주변을 탐색해요.</p>
+        </section>
+
+        <article class="card">
+          <h3>🌳 주변 관찰하기</h3>
+          <p>창밖의 나무, 바람 소리, 햇빛처럼 주변의 변화를 함께 살펴봐요.</p>
+        </article>
+
+        <article class="card">
+          <h3>🧸 실내에서 놀기</h3>
+          <p>날씨가 좋지 않거나 외출이 어려운 날에는 그림책과 안전한 장난감으로 놀아주세요.</p>
+        </article>
+
+        <div class="notice">
+          외출할 때는 기온과 바람, 미세먼지 등 당일 환경을 확인하고
+          아기의 컨디션에 맞춰 활동해 주세요.
+        </div>
+      `;
+    }
+
+    function renderProfilePage() {
+      const age = getAge();
+
+      document.getElementById("main").innerHTML = `
+        <section class="hero">
+          <span class="badge">우리 아기</span>
+          <h2>최서윤 💗</h2>
+          <p>서윤이의 기본 정보를 확인해요.</p>
+        </section>
+
+        <article class="card">
+          <div class="profile-row">
+            <strong>이름</strong><span>최서윤</span>
+          </div>
+          <div class="profile-row">
+            <strong>생년월일</strong><span>2026년 1월 13일</span>
+          </div>
+          <div class="profile-row">
+            <strong>현재 월령</strong><span>${age}개월</span>
+          </div>
+        </article>
+
+        <div class="notice">
+          월령은 생년월일을 기준으로 자동 계산돼요.
+        </div>
+      `;
+    }
+
+    function render() {
+      renderTabs();
+
+      if (currentPage === "home") renderHome();
+      if (currentPage === "season") renderSeasonPage();
+      if (currentPage === "dev") renderDevelopmentPage();
+      if (currentPage === "play") renderPlayPage();
+      if (currentPage === "profile") renderProfilePage();
+    }
+
+    async function loadData() {
+      const results = await Promise.allSettled([
+        fetch("./development.json").then(response => {
+          if (!response.ok) throw new Error("development.json");
+          return response.json();
+        }),
+        fetch("./play.json").then(response => {
+          if (!response.ok) throw new Error("play.json");
+          return response.json();
+        })
+      ]);
+
+      if (results[0].status === "fulfilled" &&
+          Array.isArray(results[0].value)) {
+        developmentData = results[0].value;
+      }
+
+      if (results[1].status === "fulfilled" &&
+          Array.isArray(results[1].value)) {
+        playData = results[1].value;
+      }
+
+      render();
+    }
+
+    document.getElementById("tabs").addEventListener("click", event => {
+      const button = event.target.closest("[data-page]");
+      if (!button) return;
+
+      currentPage = button.dataset.page;
+      render();
+      window.scrollTo({ top: 0, behavior: "smooth" });
     });
-  });
-}
 
-render();
-loadData();
-</script>
+    render();
+    loadData();
+
+    if ("serviceWorker" in navigator &&
+        location.protocol === "https:") {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./service-worker.js")
+          .catch(error => console.error("서비스 워커 등록 실패:", error));
+      });
+    }
+  </script>
 </body>
 </html>
