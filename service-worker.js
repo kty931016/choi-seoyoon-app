@@ -1,5 +1,4 @@
-
-const CACHE_NAME = "choi-seoyoon-v1";
+const CACHE_NAME = "choi-seoyoon-v2";
 
 const APP_FILES = [
   "./",
